@@ -1,6 +1,6 @@
 use std::{fs, iter::zip};
 
-const INPUT_PATH: &str = "resources/input_1.txt";
+const INPUT_PATH: &str = "resources/input_01.txt";
 
 fn parse(input: &str) -> (Vec<usize>, Vec<usize>) {
     input
