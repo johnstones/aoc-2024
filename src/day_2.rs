@@ -1,37 +1,44 @@
 use std::fs;
-use std::iter::zip;
 
 const INPUT_PATH: &str = "resources/input_02.txt";
 
 fn parse(report: &str) -> Vec<usize> {
     report
         .split_whitespace()
-        .map(|s| s.parse::<usize>().unwrap())
+        .map(|s| s.parse().unwrap())
         .collect()
 }
 
-fn is_safe(levels: &Vec<usize>) -> bool {
+fn is_safe(levels: &[usize]) -> bool {
     let is_increasing = levels.iter().is_sorted();
     let is_decreasing = levels.iter().rev().is_sorted();
-    let is_stable = zip(levels[..levels.len() - 1].iter(), levels[1..].iter()).all(|(&x1, &x2)| {
-        let dx = x1.abs_diff(x2);
+    let is_stable = levels.windows(2).all(|pair| {
+        let dx = pair[0].abs_diff(pair[1]);
         dx >= 1 && dx <= 3
     });
     (is_increasing || is_decreasing) && is_stable
 }
 
-fn is_safe_dampened(levels: &Vec<usize>) -> bool {
+fn is_safe_dampened(levels: &[usize]) -> bool {
     (0..levels.len())
         .map(|i| [&levels[..i], &levels[i + 1..levels.len()]].concat())
         .any(|levels_dampened| is_safe(&levels_dampened))
 }
 
 fn part_1_process(input: &str) -> usize {
-    input.lines().map(parse).filter(is_safe).count()
+    input
+        .lines()
+        .map(parse)
+        .filter(|levels| is_safe(levels))
+        .count()
 }
 
 fn part_2_process(input: &str) -> usize {
-    input.lines().map(parse).filter(is_safe_dampened).count()
+    input
+        .lines()
+        .map(parse)
+        .filter(|levels| is_safe_dampened(levels))
+        .count()
 }
 
 pub fn part_1() -> usize {
