@@ -3,7 +3,7 @@ use std::{fs, sync::LazyLock};
 
 const INPUT_PATH: &str = "resources/input_03.txt";
 
-const ACTION_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+static ACTION_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?<action>mul|do|don't)\(((?<x>[0-9]+),(?<y>[0-9]+))?\)").unwrap()
 });
 
@@ -46,7 +46,7 @@ fn part_2_process(input: &str) -> usize {
         match action {
             Action::Mul(x, y) => {
                 if doing {
-                    result += x * y
+                    result += x * y;
                 }
             }
             Action::Do => doing = true,

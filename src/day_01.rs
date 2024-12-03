@@ -15,8 +15,8 @@ fn parse(input: &str) -> (Vec<usize>, Vec<usize>) {
 
 fn part_1_process(input: &str) -> usize {
     let (mut left_list, mut right_list) = parse(input);
-    left_list.sort();
-    right_list.sort();
+    left_list.sort_unstable();
+    right_list.sort_unstable();
     zip(left_list, right_list)
         .map(|(left, right)| left.abs_diff(right))
         .sum()

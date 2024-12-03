@@ -14,7 +14,7 @@ fn is_safe(levels: &[usize]) -> bool {
     let is_decreasing = levels.iter().rev().is_sorted();
     let is_stable = levels.windows(2).all(|pair| {
         let dx = pair[0].abs_diff(pair[1]);
-        dx >= 1 && dx <= 3
+        (1..=3).contains(&dx)
     });
     (is_increasing || is_decreasing) && is_stable
 }
