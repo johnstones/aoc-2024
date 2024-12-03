@@ -1,31 +1,39 @@
 use regex::Regex;
-use std::fs;
+use std::{fs, sync::LazyLock};
 
 const INPUT_PATH: &str = "resources/input_03.txt";
 
-fn parse(input: &str) -> Vec<(&str, Option<(usize, usize)>)> {
-    let pattern = Regex::new(r"(?<action>mul|do|don't)\(((?<x>[0-9]+),(?<y>[0-9]+))?\)").unwrap();
-    let mut result = Vec::new();
-    for caps in pattern.captures_iter(input) {
-        match &caps["action"] {
+const ACTION_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?<action>mul|do|don't)\(((?<x>[0-9]+),(?<y>[0-9]+))?\)").unwrap()
+});
+
+enum Action {
+    Mul(usize, usize),
+    Do,
+    Dont,
+}
+
+fn parse(input: &str) -> Vec<Action> {
+    ACTION_REGEX
+        .captures_iter(input)
+        .map(|caps| match &caps["action"] {
             "mul" => {
                 let x = caps["x"].parse().unwrap();
                 let y = caps["y"].parse().unwrap();
-                result.push(("mul", Some((x, y))));
+                Action::Mul(x, y)
             }
-            "do" => result.push(("do", None)),
-            "don't" => result.push(("don't", None)),
-            _ => {}
-        }
-    }
-    result
+            "do" => Action::Do,
+            "don't" => Action::Dont,
+            _ => unreachable!(),
+        })
+        .collect()
 }
 
 fn part_1_process(input: &str) -> usize {
     parse(input)
         .iter()
         .map(|action| match action {
-            ("mul", Some((x, y))) => x * y,
+            Action::Mul(x, y) => x * y,
             _ => 0,
         })
         .sum()
@@ -34,16 +42,15 @@ fn part_1_process(input: &str) -> usize {
 fn part_2_process(input: &str) -> usize {
     let mut result = 0;
     let mut doing = true;
-    for action in parse(input).iter() {
+    for action in parse(input) {
         match action {
-            ("mul", Some((x, y))) => {
+            Action::Mul(x, y) => {
                 if doing {
                     result += x * y
                 }
             }
-            ("do", None) => doing = true,
-            ("don't", None) => doing = false,
-            _ => {}
+            Action::Do => doing = true,
+            Action::Dont => doing = false,
         }
     }
     result
