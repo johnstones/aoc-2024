@@ -1,5 +1,6 @@
 mod day_01;
 mod day_02;
+mod day_03;
 
 use std::env;
 
@@ -23,6 +24,14 @@ fn main() {
         }
         ("2", "2") => {
             let result = day_02::part_2();
+            println!("{result}");
+        }
+        ("3", "1") => {
+            let result = day_03::part_1();
+            println!("{result}");
+        }
+        ("3", "2") => {
+            let result = day_03::part_2();
             println!("{result}");
         }
         _ => {}
